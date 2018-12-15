@@ -1,17 +1,31 @@
 @charset "UTF-8";
 
+/* テーブルとtdセルの設定 */
 table, table tr td {
+
+    /* 枠線の設定 */
     border-color: #000000;
     border-style: solid;
+    border-width: 1px;
 }
 
 
+
+
+/* tdセルの設定 */
 table tr td {
+
+    /* セルの大きさ */
     width: 50px;
     height: 50px;
 
+    /* フォント */
     font-size: 25px;
     text-align: center;
 
-    cursor: pointer
+    /* マウスカーソル：人差し指 */
+    cursor: pointer;
+
+    /* テキスト選択：無効 */
+    user-select: none;
 }
