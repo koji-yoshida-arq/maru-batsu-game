@@ -101,6 +101,9 @@ function clickTd(target) {
 // テーブルの状態把握とゲームの続行判定
 function checkGameOver() {
 
+    //空きセルの確認
+    var count;
+
     // 終了条件
     var finishPatterns = [
 
@@ -140,15 +143,11 @@ function checkGameOver() {
 
     // ゲームが続行しているかどうか（false:終了、true:続行）
     if(mode == false) {
-
-
-        // 勝利プレイヤの表示（true:×の勝ち、false:○の勝ち）
         if (isMaru == true) {
             document.getElementById("result").innerText = "×の勝ちです。F5キーを押してもう一度！";
         } else {
             document.getElementById("result").innerText = "○の勝ちです。F5キーを押してもう一度！";
         }
-
 
         // すべてのセルのhoverした際のカーソルを「操作できない領域用」にする
         for(var i = 0; i < 3; i++) {
@@ -158,12 +157,30 @@ function checkGameOver() {
         }
 
     } else {
+        
+        //埋まっているマスのカウント
+        for(count = 0; count < 9; count++) {
+            if(cellStatus[count] == null) {
+                break;
+            }
+        }
 
-        // 次プレイヤの表示（true:○の番、false:×の番）
-        if (isMaru == true) {
-            document.getElementById("result").innerText = "○の番です。";
+        //埋まっているマスが9マスだったら引き分け
+        if(count == 9) {
+
+            //ゲームの終了
+            mode = false;
+            document.getElementById("result").innerText = "引き分けです。F5キーを押してもう一度！";
+        
         } else {
-            document.getElementById("result").innerText = "×の番です。";
+
+            // 次プレイヤの表示（true:○の番、false:×の番）
+            if (isMaru == true) {
+                document.getElementById("result").innerText = "○の番です。";
+            } else {
+                document.getElementById("result").innerText = "×の番です。";
+            }
+            
         }
     }
 }
