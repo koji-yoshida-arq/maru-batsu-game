@@ -21,11 +21,20 @@ table tr td {
 
     /* フォント */
     font-size: 25px;
+    font-weight: 700;
     text-align: center;
-
-    /* マウスカーソル：人差し指 */
-    cursor: pointer;
 
     /* テキスト選択：無効 */
     user-select: none;
+
+    cursor : not-allowed;
+}
+
+
+
+
+
+
+input {
+    margin-bottom: 50px;
 }

@@ -1,8 +1,8 @@
 // ゲームの稼動非稼動
-var mode = true;
+var mode = false;
 
 // ターン（trueが○、falseが×）
-var isMaru = true;
+var isMaru;
 
 // セルのステータス
 var cellStatus = [
@@ -13,10 +13,9 @@ var cellStatus = [
 
 
 
+function first() {
+    document.getElementById("gamemonitor").innerHTML = "<table></table>";
 
-
-// ゲームテーブルの生成
-function game() {
 
     // テーブルの読み込み
     var table = document.querySelector("table");
@@ -48,6 +47,43 @@ function game() {
 
 
 
+function game() {
+
+
+    reset();
+}
+
+
+
+
+
+function reset() {
+    for(var i = 0; i < 3; i++) {
+        for(var j = 0; j < 3; j++) {
+            document.getElementById(i + "-" + j).innerHTML= "";
+            document.getElementById(i + "-" + j).style.cursor = 'pointer';
+            document.getElementById(i + "-" + j).style.backgroundColor = '#ffffff';
+
+            cellStatus[i * 3 + j] = null;
+        }
+    }
+
+    isMaru = true;
+    document.getElementById("result").innerText = "○の番です。";
+    
+    mode = true;
+}
+
+
+
+
+
+// ゲームテーブルの生成
+
+
+
+
+
 
 // セルがクリックされたときの動作
 function clickTd(target) {
@@ -71,7 +107,8 @@ function clickTd(target) {
             if(isMaru == true) {
 
                 // セルに○を記載
-                target.innerHTML = '○';
+                target.innerHTML = '〇';
+                target.style.color = '#ff0000';
 
                 // ターン交替
                 isMaru = false;
@@ -80,6 +117,7 @@ function clickTd(target) {
 
                 // セルに×を記載
                 target.innerHTML = '×';
+                target.style.color = '#0000ff';
 
                 // ターン交替
                 isMaru = true;
@@ -126,17 +164,36 @@ function checkGameOver() {
     // 終了条件判定
     for(var i = 0; i < finishPatterns.length; i++) {
 
+        var cell = [null, null, null];
+        var bcolor;
+
         // セルの状態を判定用の変数に代入
-        var cell1 = cellStatus[finishPatterns[i][0]];
-        var cell2 = cellStatus[finishPatterns[i][1]];
-        var cell3 = cellStatus[finishPatterns[i][2]];
+        cell[0] = cellStatus[finishPatterns[i][0]];
+        cell[1] = cellStatus[finishPatterns[i][1]];
+        cell[2] = cellStatus[finishPatterns[i][2]];
 
 
         // 終了条件と一致しているか確認
-        if(cell1 != null && cell2 != null && cell3 != null && cell1 == cell2 && cell2 == cell3){
+        if((cell[0] != null) && (cell[1] != null) && (cell[2] != null) && (cell[0] == cell[1]) && (cell[1] == cell[2])) {
             
             //一致している場合はゲームを続行させない 
             mode = false;
+
+            for(j = 0; j < cell.length; j++) {
+                var x;
+                var y;
+                
+                if(isMaru == true) {
+                    bcolor = '#0000ff'
+                } else {
+                    bcolor = '#ff0000';
+                }
+                
+                x = Math.floor(finishPatterns[i][j] / 3);
+                y = finishPatterns[i][j] % 3;
+                document.getElementById(y + "-" + x).style.color = '#ffffff'
+                document.getElementById(y + "-" + x).style.backgroundColor = bcolor;
+            }
         }
     }
 
@@ -144,9 +201,9 @@ function checkGameOver() {
     // ゲームが続行しているかどうか（false:終了、true:続行）
     if(mode == false) {
         if (isMaru == true) {
-            document.getElementById("result").innerText = "×の勝ちです。F5キーを押してもう一度！";
+            document.getElementById("result").innerText = "×の勝ちです。リセットボタンを押してもう一度！";
         } else {
-            document.getElementById("result").innerText = "○の勝ちです。F5キーを押してもう一度！";
+            document.getElementById("result").innerText = "○の勝ちです。リセットボタンを押してもう一度！";
         }
 
         // すべてのセルのhoverした際のカーソルを「操作できない領域用」にする
@@ -170,7 +227,7 @@ function checkGameOver() {
 
             //ゲームの終了
             mode = false;
-            document.getElementById("result").innerText = "引き分けです。F5キーを押してもう一度！";
+            document.getElementById("result").innerText = "引き分けです。リセットボタンを押してもう一度！";
         
         } else {
 
@@ -184,3 +241,8 @@ function checkGameOver() {
         }
     }
 }
+
+
+
+
+

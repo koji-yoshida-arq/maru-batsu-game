@@ -16,18 +16,23 @@
 
 
 
-<body onload="game();">
+<body onload="first();">
 
   <!-- ページタイトル -->
   <h1>○×ゲーム</h1>
 
+  <!-- リセットボタン -->
+  <input type="submit" value="ゲームスタート" onclick="game();">
+
   <!-- ○×ゲーム表示箇所 -->
-  <table>
-  </table>
+  <div id="gamemonitor">
+  </div>
 
   <!-- ターン後の状況表示箇所 -->
   <p id = result>○の番です。</p>
-     
+  
+  
+
 </body>
 
 </html>
