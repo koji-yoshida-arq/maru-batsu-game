@@ -1,3 +1,3 @@
-# maru-batsu-game3
+# maru-batsu-game
 ○×ゲームをHTMLとJavaScriptで作る。
 CSSとJavaScriptを外部ファイルに。
