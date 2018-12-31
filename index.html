@@ -5,34 +5,55 @@
 
 
 
-<head>
-  <meta charset="utf-8">
-  <title>〇×ゲーム</title>
-  <link rel="stylesheet" type="text/css" href="./design.css">
-  <script type="text/javascript" src="./move.js"></script>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>〇×ゲーム</title>
+    <link rel="stylesheet" type="text/css" href="./design.css">
+    <script type="text/javascript" src="./move.js"></script>
+  </head>
 
 
 
 
 
-<body onload="first();">
+  <body>
 
-  <!-- ページタイトル -->
-  <h1>○×ゲーム</h1>
+    <!-- ページタイトル -->
+    <h1>○×ゲーム</h1>
 
-  <!-- リセットボタン -->
-  <input type="submit" value="ゲームスタート" onclick="game();">
+    <p>
+      <!-- 先攻・後攻 -->
+      先攻を選んでください。
+      <br>
+      <form name="form1">
+        <input type="radio" name="turn" value="maru">○　
+        <select name="maru_player">
+          <option value="maru_human">人間</option>
+          <option value="maru_cpu">CPU</option>
+        </select>
 
-  <!-- ○×ゲーム表示箇所 -->
-  <div id="gamemonitor">
-  </div>
+        <br>
 
-  <!-- ターン後の状況表示箇所 -->
-  <p id = result>○の番です。</p>
-  
-  
+        <input type="radio" name="turn" value="batsu">×　
+        <select name="batsu_player">
+          <option value="batsu_human">人間</option>
+          <option value="batsu_cpu">CPU</option>
+        </select>
+      </form>
+      <br>
 
-</body>
+      <!-- スタートボタン -->
+      <input type="submit" value="ゲームスタート" onclick="game();">
+    </p>
+    <!-- ○×ゲーム表示箇所 -->
+    <div id="gamemonitor">
+    </div>
+
+    <!-- ターン後の状況表示箇所 -->
+    <p id="result">ゲームスタートを押すとゲームが始まります。</p>
+    
+    
+
+  </body>
 
 </html>

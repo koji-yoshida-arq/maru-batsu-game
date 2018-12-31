@@ -1,5 +1,6 @@
 // ゲームの稼動非稼動
 var mode = false;
+var count = 0;
 
 // ターン（trueが○、falseが×）
 var isMaru;
@@ -17,6 +18,40 @@ var cellReach = [
     null, null, null,
     null, null, null
 ]
+
+
+
+function game() {
+    let　str = "";
+    const turn = document.form1.turn;
+
+    for (let i = 0; i < turn.length; i++) {
+        if(turn[i].checked) {
+            str = turn[i].value;
+
+            if(str == "maru") {
+                isMaru = true;
+            } else {
+                isMaru = false;
+            }
+
+            if(count == 0) {
+                first();
+            }
+            count++;
+        
+            reset();
+
+            break;
+        }
+    }
+
+
+    
+}
+
+
+
 
 
 
@@ -54,15 +89,6 @@ function first() {
 
 
 
-function game() {
-
-
-    reset();
-}
-
-
-
-
 
 function reset() {
     for(var i = 0; i < 3; i++) {
@@ -75,9 +101,11 @@ function reset() {
         }
     }
 
-    isMaru = true;
-    document.getElementById("result").innerText = "○の番です。";
-    
+    if(isMaru) {
+        document.getElementById("result").innerText = "○の番です。";
+    } else {
+        document.getElementById("result").innerText = "×の番です。";
+    }
     mode = true;
 }
 
