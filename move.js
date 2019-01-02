@@ -22,14 +22,14 @@ var cellReach = [
 
 
 function game() {
-    let　str = "";
     const turn = document.form1.turn;
+    const maru_player = document.form1.maru_player.value;
+    const batsu_player = document.form1.batsu_player.value;
 
-    for (let i = 0; i < turn.length; i++) {
+    for (var i = 0; i < turn.length; i++) {
         if(turn[i].checked) {
-            str = turn[i].value;
 
-            if(str == "maru") {
+            if(turn[i].value == "maru") {
                 isMaru = true;
             } else {
                 isMaru = false;
@@ -42,12 +42,16 @@ function game() {
         
             reset();
 
+
+            if(isMaru && (maru_player == "maru_cpu")) {
+                com_select();
+            } else if(!isMaru && (batsu_player == "batsu_cpu")) {
+                com_select();
+            }
+
             break;
         }
     }
-
-
-    
 }
 
 
@@ -63,13 +67,13 @@ function first() {
     var table = document.querySelector("table");
 
 
-    for(var i = 0; i < 3; i++) {
+    for(var j = 0; j < 3; j++) {
 
         // 行方向の生成（はじめ）
         var tr = document.createElement("tr");
 
 
-        for(var j = 0; j < 3; j++) {
+        for(var i = 0; i < 3; i++) {
 
             // 列方向の生成（はじめ）
             var td = document.createElement("td");
@@ -98,6 +102,8 @@ function reset() {
             document.getElementById(i + "-" + j).style.backgroundColor = '#ffffff';
 
             cellStatus[i * 3 + j] = null;
+            cellReach[i * 3 + j] = null;
+            
         }
     }
 
@@ -108,14 +114,6 @@ function reset() {
     }
     mode = true;
 }
-
-
-
-
-
-// ゲームテーブルの生成
-
-
 
 
 
@@ -135,36 +133,12 @@ function clickTd(target) {
         // セルの中身が何もかかれていないことを確認
         if(target.innerHTML == '') {
 
-            // セルのステータスを更新
-            cellStatus[y * 3 + x] = isMaru;
-
             // プレイヤの確認（true:○、false:×）
-            if(isMaru == true) {
-
-                // セルに○を記載
-                target.innerHTML = '〇';
-                target.style.color = '#ff0000';
-
-                // ターン交替
-                isMaru = false;
-
-            } else {
-
-                // セルに×を記載
-                target.innerHTML = '×';
-                target.style.color = '#0000ff';
-
-                // ターン交替
-                isMaru = true;
-            }
-
-            target.style.backgroundColor = "#ffffff";
-
-            // 記入されたセルにhoverした際のカーソルを「操作できない領域用」にする
-            document.getElementById(target.id).style.cursor = 'not-allowed';
+            //write_kigou(x, y);
+            write_kigou(x + (y * 3));
 
             // テーブルの状態把握とゲームの続行判定
-            checkGameOver();
+            //checkGameOver();
         }
     }
 }
@@ -175,9 +149,6 @@ function clickTd(target) {
 
 // テーブルの状態把握とゲームの続行判定
 function checkGameOver() {
-
-    //空きセルの確認
-    var count;
 
 
     var x;
@@ -201,6 +172,9 @@ function checkGameOver() {
         [2, 4, 6]
     ]
 
+    for(var m = 0; m < 9; m++) {
+        cellReach[m] = null;
+    }
 
     // 終了条件判定
     for(var i = 0; i < finishPatterns.length; i++) {
@@ -221,39 +195,67 @@ function checkGameOver() {
             //一致している場合はゲームを続行させない 
             mode = false;
 
-            for(j = 0; j < cell.length; j++) {
+            for(var j = 0; j < cell.length; j++) {
                 
                 
                 if(isMaru) {
-                    bcolor = '#0000ff'
+                    bcolor = '#ff0000'
                 } else {
-                    bcolor = '#ff0000';
+                    bcolor = '#0000ff';
                 }
                 
-                x = Math.floor(finishPatterns[i][j] / 3);
-                y = finishPatterns[i][j] % 3;
-                document.getElementById(y + "-" + x).style.color = '#ffffff'
-                document.getElementById(y + "-" + x).style.backgroundColor = bcolor;
+                x = finishPatterns[i][j] % 3;
+                y = Math.floor(finishPatterns[i][j] / 3);
+                
+                document.getElementById(x + "-" + y).style.color = '#ffffff'
+                document.getElementById(x + "-" + y).style.backgroundColor = bcolor;
             }
         } else if(((cell[0] != null) && (cell[1] != null) && (cell[2] == null) && (cell[0] == cell[1])) || ((cell[0] != null) && (cell[1] == null) && (cell[2] != null) && (cell[0] == cell[2])) || ((cell[0] == null) && (cell[1] != null) && (cell[2] != null) && (cell[1] == cell[2]))) {
             
-            if(isMaru) {
-                reach += 10;
-            } else {
-                reach += 1;
-            }
+            var j;
+            var reach_color;
+
             
+
             if(cell[1] == cell[2]) {
-                j = 0;    
+                j = 0;
+                reach_color = cell[1];
             } else if(cell[0] == cell[2]) {
                 j = 1;
+                reach_color = cell[0];
             } else if(cell[0] == cell[1]){
                 j = 2;
+                reach_color = cell[0];
             }
 
-            x = Math.floor(finishPatterns[i][j] / 3);
-            y = finishPatterns[i][j] % 3;
-            document.getElementById(y + "-" + x).style.backgroundColor = "#a0ffa0";
+            x = finishPatterns[i][j] % 3;
+            y = Math.floor(finishPatterns[i][j] / 3);
+
+            if(cellReach[finishPatterns[i][j]] == null) {
+                if(reach_color) {
+                    document.getElementById(x + "-" + y).style.backgroundColor = "#ffa0ff";
+                } else {
+                    document.getElementById(x + "-" + y).style.backgroundColor = "#0affff";
+                }
+                cellReach[finishPatterns[i][j]] = reach_color;
+            } else {
+                document.getElementById(x + "-" + y).style.backgroundColor = "#800080";
+                cellReach[finishPatterns[i][j]] = "both";
+            }
+
+            // if(cellReach[finishPatterns[i][j]] == null) {
+            //     cellReach[finishPatterns[i][j]] = isMaru;
+            //     if(isMaru) {
+            //         document.getElementById(x + "-" + y).style.color = '#ff0000';
+            //     } else {
+            //         document.getElementById(x + "-" + y).style.color = '#0000ff';
+            //     }
+            // } else {
+            //     cellReach[finishPatterns[i][j]] = "both";
+            //     document.getElementById(x + "-" + y).style.color = '#ff00ff';
+            // }
+
+            
         }
     }
 
@@ -263,10 +265,10 @@ function checkGameOver() {
 
     // ゲームが続行しているかどうか（false:終了、true:続行）
     if(!mode) {
-        if (isMaru == true) {
-            document.getElementById("result").innerText = "×の勝ちです。もう一度する場合は「ゲームスタート」をクリック！";
-        } else {
+        if (isMaru) {
             document.getElementById("result").innerText = "○の勝ちです。もう一度する場合は「ゲームスタート」をクリック！";
+        } else {
+            document.getElementById("result").innerText = "×の勝ちです。もう一度する場合は「ゲームスタート」をクリック！";
         }
 
         // すべてのセルのhoverした際のカーソルを「操作できない領域用」にする
@@ -278,8 +280,8 @@ function checkGameOver() {
 
     } else {
         
-        //埋まっているマスのカウント
-        for(count = 0; count < 9; count++) {
+        //空白セルの確認
+        for(var count = 0; count < 9; count++) {
             if(cellStatus[count] == null) {
                 break;
             }
@@ -295,10 +297,18 @@ function checkGameOver() {
         } else {
 
             // 次プレイヤの表示（true:○の番、false:×の番）
-            if (isMaru == true) {
-                document.getElementById("result").innerText = "○の番です。";
-            } else {
+            if (isMaru) {
+                isMaru = false;
                 document.getElementById("result").innerText = "×の番です。";
+            } else {
+                isMaru = true;
+                document.getElementById("result").innerText = "○の番です。";
+            }
+
+            if(isMaru && (document.form1.maru_player.value == "maru_cpu")) {
+                com_select();
+            } else if(!isMaru && (document.form1.batsu_player.value == "batsu_cpu")) {
+                com_select();
             }
             
         }
@@ -308,4 +318,63 @@ function checkGameOver() {
 
 
 
+function com_select() {
+    var count = 0;
+    var error = 0;
+    var i;
+    var j;
+
+    for(j = 0; j < 9; j++) {
+        if((cellStatus[j] == null) && ((cellReach[j] == isMaru) || (cellReach[j] == "both"))) {
+            // var x = j % 3;
+            // var y = Math.floor(j / 3);
+            // write_kigou(x, y);
+            write_kigou(j);
+            //checkGameOver();
+            break;
+        } else if((cellStatus[j] == null) && ((cellReach[j] != isMaru) && (cellReach[j] != null))){
+            // var x = j % 3;
+            // var y = Math.floor(j / 3);
+            // write_kigou(x, y);
+            write_kigou(j);
+            //checkGameOver();
+            break
+        } else if(cellStatus[j] != null) {
+            count++; 
+        }
+        
+    }
+}
+
+
+
+
+function write_kigou(cellno) {
+    var x = cellno % 3;
+    var y = Math.floor(cellno / 3);
+
+    // セルのステータスを更新
+    cellStatus[cellno] = isMaru;
+
+    for(var i = 0; i < 3; i++) {
+        for(var j = 0; j < 3; j++) {
+            document.getElementById(i + "-" + j).style.backgroundColor = "#ffffff";
+        }
+    }
+
+    if(isMaru) {
+        document.getElementById(x + "-" + y).innerHTML = '〇';
+        document.getElementById(x + "-" + y).style.color = "#ff0000";
+    } else {
+        document.getElementById(x + "-" + y).innerHTML = '×';
+        document.getElementById(x + "-" + y).style.color = "#0000ff";
+    }
+
+    document.getElementById(x + "-" + y).style.backgroundColor = "#ffff00";
+
+    // 記入されたセルにhoverした際のカーソルを「操作できない領域用」にする
+    document.getElementById(x + "-" + y).style.cursor = 'not-allowed';
+
+    checkGameOver();
+}
 
