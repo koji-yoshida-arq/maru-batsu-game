@@ -375,6 +375,7 @@ function write_kigou(cellno) {
     // 記入されたセルにhoverした際のカーソルを「操作できない領域用」にする
     document.getElementById(x + "-" + y).style.cursor = 'not-allowed';
 
+    //終了条件チェック
     checkGameOver();
 }
 
