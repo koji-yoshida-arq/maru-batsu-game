@@ -441,13 +441,89 @@ function com_select() {
                     }
                 }
 
-            }else if(mass_move == 8) {
+            } else if(mass_move == 8) {
                 for(var i = 0; i < 9; i++) {
                     if(cellStatus[i] == null) {
                         moving[mass_move] = i;
                         break;
                     }
                 }
+            } else if(mass_move == 1) {
+                if((cellStatus[0] == null) && (cellStatus[2] == null) && (cellStatus[6] == null) && (cellStatus[8] == null)) {
+                    if(cellStatus[4] == null) {
+                        if(cellStatus[1] != null) {
+                            switch(Math.floor(Math.random() * 4)) {
+                                case 0:
+                                    moving[mass_move] = 0;
+                                    break;
+                                case 1:
+                                    moving[mass_move] = 2;
+                                    break;
+                                case 2:
+                                    moving[mass_move] = 4;
+                                    break;
+                                case 3:
+                                    moving[mass_move] = 7;
+                                    break;
+                            }
+                        } else if(cellStatus[3] != null) {
+                            switch(Math.floor(Math.random() * 4)) {
+                                case 0:
+                                    moving[mass_move] = 0;
+                                    break;
+                                case 1:
+                                    moving[mass_move] = 4;
+                                    break;
+                                case 2:
+                                    moving[mass_move] = 5;
+                                    break;
+                                case 3:
+                                    moving[mass_move] = 6;
+                                    break;
+                            }
+
+                        } else if(cellStatus[5] != null) {
+                            switch(Math.floor(Math.random() * 4)) {
+                                case 0:
+                                    moving[mass_move] = 2;
+                                    break;
+                                case 1:
+                                    moving[mass_move] = 3;
+                                    break;
+                                case 2:
+                                    moving[mass_move] = 4;
+                                    break;
+                                case 3:
+                                    moving[mass_move] = 8;
+                                    break;
+                            }
+                        } else if(cellStatus[7] != null) {
+                            switch(Math.floor(Math.random() * 4)) {
+                                case 0:
+                                    moving[mass_move] = 1;
+                                    break;
+                                case 1:
+                                    moving[mass_move] = 4;
+                                    break;
+                                case 2:
+                                    moving[mass_move] = 6;
+                                    break;
+                                case 3:
+                                    moving[mass_move] = 8;
+                                    break;
+                            }
+                        }
+                    } else {
+                        moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                        if(moving[mass_move] == 4) {
+                            moving[mass_move] = 8;
+                        }
+                    }
+                } else {
+                    moving[mass_move] = 4;
+                }
+            } else if(mass_move == 3) {
+                
             }
 
             
