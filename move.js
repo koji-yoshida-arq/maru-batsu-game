@@ -12,7 +12,7 @@ var cellStatus = [
     null, null, null
 ];
 
-
+// 該当セルがリーチかどうか
 var cellReach = [
     null, null, null,
     null, null, null,
@@ -21,6 +21,8 @@ var cellReach = [
 
 
 
+
+// ゲームスタート
 function game() {
     const turn = document.form1.turn;
     const maru_player = document.form1.maru_player.value;
@@ -29,20 +31,23 @@ function game() {
     for (var i = 0; i < turn.length; i++) {
         if(turn[i].checked) {
 
+            // 初ゲーム時のテーブルの生成
+            if(count == 0) {
+                first();
+            }
+            count++;
+
+            // 先攻・後攻の指定
             if(turn[i].value == "maru") {
                 isMaru = true;
             } else {
                 isMaru = false;
             }
-
-            if(count == 0) {
-                first();
-            }
-            count++;
         
+            //盤面の初期化
             reset();
 
-
+            // CPUを選択した場合の操作
             if(isMaru && (maru_player == "maru_cpu")) {
                 com_select();
             } else if(!isMaru && (batsu_player == "batsu_cpu")) {
@@ -60,6 +65,8 @@ function game() {
 
 
 function first() {
+
+    // テーブルの生成
     document.getElementById("gamemonitor").innerHTML = "<table></table>";
 
 
@@ -97,16 +104,26 @@ function first() {
 function reset() {
     for(var i = 0; i < 3; i++) {
         for(var j = 0; j < 3; j++) {
+
+            // セル内の表示をリセット
             document.getElementById(i + "-" + j).innerHTML= "";
+            
+            // カーソルをポインターにセット
             document.getElementById(i + "-" + j).style.cursor = 'pointer';
+            
+            // 背景色を白
             document.getElementById(i + "-" + j).style.backgroundColor = '#ffffff';
 
+            // セル情報のリセット
             cellStatus[i * 3 + j] = null;
+
+            // リーチ情報のリセット
             cellReach[i * 3 + j] = null;
             
         }
     }
 
+    // 第一ターンの指定
     if(isMaru) {
         document.getElementById("result").innerText = "○の番です。";
     } else {
@@ -114,6 +131,7 @@ function reset() {
     }
     mode = true;
 }
+
 
 
 
@@ -134,12 +152,17 @@ function clickTd(target) {
         if(target.innerHTML == '') {
 
             // プレイヤの確認（true:○、false:×）
-            //write_kigou(x, y);
             write_kigou(x + (y * 3));
-
-            // テーブルの状態把握とゲームの続行判定
-            //checkGameOver();
         }
+    }
+
+    // 次プレイヤがCOMかどうかの確認
+    if(isMaru && (document.form1.maru_player.value == "maru_cpu")) {
+        console.log("チェック1");
+        com_select();
+    } else if((isMaru == false) && (document.form1.batsu_player.value == "batsu_cpu")) {
+        console.log("チェック2");
+        com_select();
     }
 }
 
@@ -173,6 +196,7 @@ function checkGameOver() {
     ]
 
     for(var m = 0; m < 9; m++) {
+        // リーチ条件の初期化
         cellReach[m] = null;
     }
 
@@ -189,7 +213,7 @@ function checkGameOver() {
         cell[2] = cellStatus[finishPatterns[i][2]];
 
 
-        // 終了条件と一致しているか確認
+        // 終了条件と一致しているか、リーチであるか
         if((cell[0] != null) && (cell[1] != null) && (cell[2] != null) && (cell[0] == cell[1]) && (cell[1] == cell[2])) {
             
             //一致している場合はゲームを続行させない 
@@ -197,26 +221,29 @@ function checkGameOver() {
 
             for(var j = 0; j < cell.length; j++) {
                 
-                
+                // 勝利時の色選択
                 if(isMaru) {
-                    bcolor = '#ff0000'
+                    bcolor = "#ff0000";
                 } else {
-                    bcolor = '#0000ff';
+                    bcolor = "#0000ff";
                 }
                 
+                // 勝利時のセルの特定
                 x = finishPatterns[i][j] % 3;
                 y = Math.floor(finishPatterns[i][j] / 3);
                 
-                document.getElementById(x + "-" + y).style.color = '#ffffff'
+                // 勝利時の表示変更
+                document.getElementById(x + "-" + y).style.color = "#ffffff";
                 document.getElementById(x + "-" + y).style.backgroundColor = bcolor;
+
             }
+
         } else if(((cell[0] != null) && (cell[1] != null) && (cell[2] == null) && (cell[0] == cell[1])) || ((cell[0] != null) && (cell[1] == null) && (cell[2] != null) && (cell[0] == cell[2])) || ((cell[0] == null) && (cell[1] != null) && (cell[2] != null) && (cell[1] == cell[2]))) {
-            
+
             var j;
             var reach_color;
 
-            
-
+            // リーチセルの特定
             if(cell[1] == cell[2]) {
                 j = 0;
                 reach_color = cell[1];
@@ -228,33 +255,27 @@ function checkGameOver() {
                 reach_color = cell[0];
             }
 
+            // リーチセルのセル情報の特定
             x = finishPatterns[i][j] % 3;
             y = Math.floor(finishPatterns[i][j] / 3);
 
+            // リーチ者の特定
             if(cellReach[finishPatterns[i][j]] == null) {
                 if(reach_color) {
+                    // ○がリーチ
                     document.getElementById(x + "-" + y).style.backgroundColor = "#ffa0ff";
                 } else {
+                    // ×がリーチ
                     document.getElementById(x + "-" + y).style.backgroundColor = "#0affff";
                 }
+                // リーチ情報の代入
                 cellReach[finishPatterns[i][j]] = reach_color;
             } else {
+                // 両者ともリーチ
                 document.getElementById(x + "-" + y).style.backgroundColor = "#800080";
+                // リーチ情報の代入
                 cellReach[finishPatterns[i][j]] = "both";
             }
-
-            // if(cellReach[finishPatterns[i][j]] == null) {
-            //     cellReach[finishPatterns[i][j]] = isMaru;
-            //     if(isMaru) {
-            //         document.getElementById(x + "-" + y).style.color = '#ff0000';
-            //     } else {
-            //         document.getElementById(x + "-" + y).style.color = '#0000ff';
-            //     }
-            // } else {
-            //     cellReach[finishPatterns[i][j]] = "both";
-            //     document.getElementById(x + "-" + y).style.color = '#ff00ff';
-            // }
-
             
         }
     }
@@ -303,14 +324,7 @@ function checkGameOver() {
             } else {
                 isMaru = true;
                 document.getElementById("result").innerText = "○の番です。";
-            }
-
-            if(isMaru && (document.form1.maru_player.value == "maru_cpu")) {
-                com_select();
-            } else if(!isMaru && (document.form1.batsu_player.value == "batsu_cpu")) {
-                com_select();
-            }
-            
+            } 
         }
     }
 }
@@ -319,31 +333,67 @@ function checkGameOver() {
 
 
 function com_select() {
-    var count = 0;
+    var mass_null = 0;
     var error = 0;
-    var i;
-    var j;
+    var count;
+    var anotherReach = 99;
 
-    for(j = 0; j < 9; j++) {
-        if((cellStatus[j] == null) && ((cellReach[j] == isMaru) || (cellReach[j] == "both"))) {
-            // var x = j % 3;
-            // var y = Math.floor(j / 3);
-            // write_kigou(x, y);
-            write_kigou(j);
-            //checkGameOver();
-            break;
-        } else if((cellStatus[j] == null) && ((cellReach[j] != isMaru) && (cellReach[j] != null))){
-            // var x = j % 3;
-            // var y = Math.floor(j / 3);
-            // write_kigou(x, y);
-            write_kigou(j);
-            //checkGameOver();
-            break
-        } else if(cellStatus[j] != null) {
-            count++; 
-        }
+    var moving = new Array(9);
+    var flag = false;
+
+    for(count = 0; count < 9; count++) {
         
+        if((cellStatus[count] == null) && ((cellReach[count] == isMaru) || (cellReach[count] == "both"))) {
+            console.log("チェック5");
+            write_kigou(count);
+            break;
+        } else if((cellStatus[count] == null) && ((cellReach[count] != isMaru) && (cellReach[count] != null))){
+            anotherReach = count;
+        } else if(cellStatus[count] == null) {
+            mass_null++; 
+        }
     }
+
+
+    
+    if(count == 9) {
+
+        if(anotherReach < 9) {
+            console.log("チェック3");
+            write_kigou(anotherReach);
+        } else {
+            if(mass_null == 9) {
+                moving[9 - mass_null] = Math.floor(Math.random() * 4) * 2;
+                if(moving[9 - mass_null] == 4) {
+                    moving[9 - mass_null] = 8;
+                } 
+                console.log("チェック4");
+                write_kigou(moving[9 - mass_null]);
+            }
+
+            if(mass_null == 1) {
+                for(var i = 0; i < 9; i++) {
+                    flag = true;
+                    if(cellStatus[i] == null) {
+                        console.log("チェック6");
+                        write_kigou(i);
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+
+            if(flag) {
+                console.log("エラー");
+            }
+        }
+
+
+    }
+
+
+    
+    
 }
 
 
