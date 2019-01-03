@@ -5,6 +5,10 @@ var count = 0;
 // ターン（trueが○、falseが×）
 var isMaru;
 
+var turn;
+var maru_player;
+var batsu_player;
+
 // セルのステータス
 var cellStatus = [
     null, null, null,
@@ -17,16 +21,16 @@ var cellReach = [
     null, null, null,
     null, null, null,
     null, null, null
-]
+];
 
 
 
 
 // ゲームスタート
 function game() {
-    const turn = document.form1.turn;
-    const maru_player = document.form1.maru_player.value;
-    const batsu_player = document.form1.batsu_player.value;
+    turn = document.form1.turn;
+    maru_player = document.form1.maru_player.value;
+    batsu_player = document.form1.batsu_player.value;
 
     for (var i = 0; i < turn.length; i++) {
         if(turn[i].checked) {
@@ -157,10 +161,10 @@ function clickTd(target) {
     }
 
     // 次プレイヤがCOMかどうかの確認
-    if(isMaru && (document.form1.maru_player.value == "maru_cpu")) {
+    if(isMaru && (maru_player == "maru_cpu")) {
         console.log("チェック1");
         com_select();
-    } else if((isMaru == false) && (document.form1.batsu_player.value == "batsu_cpu")) {
+    } else if((isMaru == false) && (batsu_player == "batsu_cpu")) {
         console.log("チェック2");
         com_select();
     }
@@ -361,8 +365,7 @@ function com_select() {
     if(count == 9) {
 
         if(anotherReach < 9) {
-            console.log("チェック3");
-            write_kigou(anotherReach);
+            moving[mass_move] = anotherReach;
         } else {
             mass_move = 9 - mass_null;
 
@@ -371,10 +374,9 @@ function com_select() {
                 if(moving[mass_move] == 4) {
                     moving[mass_move] = 8;
                 } 
-                console.log("チェック4");
-                write_kigou(moving[mass_move]);
 
             } else if(mass_move == 2) {
+
                 if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
                     if(cellStatus[0] == isMaru) {
                         moving[mass_move] = 8;
@@ -386,64 +388,72 @@ function com_select() {
                         moving[mass_move] = 0;
                     }
 
-                    console.log("チェック7");
-                    write_kigou(moving[mass_move]);
-                } else {
-                    if((cellStatus[0] == isMaru) && (((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
+                } else if(((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) {
+                    if((cellStatus[0] == isMaru) && (cellStatus[8] == null)) {
                         moving[mass_move] = 8;
-
-                        console.log("チェック8");
-                        write_kigou(moving[mass_move]);
-                    } else if((cellStatus[2] == isMaru) && (((cellStatus[8] != isMaru) && (cellStatus[8] != null)) || ((cellStatus[0] != isMaru) && (cellStatus[0] != null)))) {
+                    } else if((cellStatus[2] == isMaru) && (cellStatus[6] == null)) {
                         moving[mass_move] = 6;
-
-                        console.log("チェック9");
-                        write_kigou(moving[mass_move]);
-                    } else if((cellStatus[8] == isMaru) && (((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)))) {
-                        moving[mass_move] = 0;
-
-                        console.log("チェック10");
-                        write_kigou(moving[mass_move]);
-                    } else if((cellStatus[6] == isMaru) && (((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
+                    } else if((cellStatus[6] == isMaru) && (cellStatus[2] == null)) {
                         moving[mass_move] = 2;
+                    } else if((cellStatus[8] == isMaru) && (cellStatus[0] == null)) {
+                        moving[mass_move] = 0;
+                    } else {
+                        do {
+                            moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                            if(moving[mass_move] == 4) {
+                                moving[mass_move] = 8;
+                            }
+                        } while (cellStatus[moving[mass_move]] != null);
+                    }
 
-                        console.log("チェック11");
-                        write_kigou(moving[mass_move]);
+                } else {
+                    if((cellStatus[0] == isMaru) || (cellStatus[8] == isMaru)) {
+                        if((cellStatus[1] == null) && (cellStatus[5] == null)) {
+                            moving[mass_move] = 2;
+                        } else if((cellStatus[3] == null) && (cellStatus[7] == null)) {
+                            moving[mass_move] = 6;
+                        }
+                    } else if((cellStatus[2] == isMaru) || (cellStatus[6] == isMaru)) {
+                        if((cellStatus[1] == null) && (cellStatus[3] == null)) {
+                            moving[mass_move] = 0;
+                        } else if((cellStatus[5] == null) && (cellStatus[7] == null)) {
+                            moving[mass_move] = 8;
+                        }
                     }
                 }
+
+
+                
                 
             } else if(mass_move == 4) {
-                // if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
-                //     if((cellStatus[0] == isMaru) && (cellStatus[8] == isMaru)) {
-                //         if((cellStatus[3] == null) && (cellStatus[0] == null) && (cellStatus[1] == null)) {
-                //             moving[mass_move] = 0;
-                //         } else if((cellStatus[6] == null) && (cellStatus[8] == null)&& (cellStatus[7] == null)) {
-                //             moving[mass_move] = 8;
-                //         }
-                //     } else if((cellStatus[2] == isMaru) && (cellStatus[6] == isMaru)) {
-                        
-                //     }
-                // }
-
-
+                
+                if(cellStatus[4] == null) {
+                    moving[mass_move] = 4;
+                } else {
+                    if(cellStatus[0] == null) {
+                        moving[mass_move] = 0;
+                    } else if(cellStatus[2] == null) {
+                        moving[mass_move] = 2;
+                    } else if(cellStatus[6] == null) {
+                        moving[mass_move] = 6;
+                    } else if(cellStatus[8] == null) {
+                        moving[mass_move] = 8;
+                    }
+                }
 
             }else if(mass_move == 8) {
                 for(var i = 0; i < 9; i++) {
                     if(cellStatus[i] == null) {
-                        console.log("チェック6");
                         moving[mass_move] = i;
-                        write_kigou(moving[mass_move]);
                         break;
                     }
                 }
             }
 
-            if(flag) {
-                console.log("エラー");
-            }
+            
         }
 
-
+        write_kigou(moving[mass_move]);
     }
 
 
