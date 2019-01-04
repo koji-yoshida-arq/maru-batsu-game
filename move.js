@@ -26,6 +26,7 @@ var cellReach = [
 
 
 
+
 // ゲームスタート
 function game() {
     turn = document.form1.turn;
@@ -69,7 +70,7 @@ function game() {
 
 
 
-
+// 初ゲーム時のテーブル生成
 function first() {
 
     // テーブルの生成
@@ -107,6 +108,7 @@ function first() {
 
 
 
+// 毎ゲームのテーブル初期化
 function reset() {
     for(var i = 0; i < 3; i++) {
         for(var j = 0; j < 3; j++) {
@@ -176,7 +178,6 @@ function clickTd(target) {
 
 // テーブルの状態把握とゲームの続行判定
 function checkGameOver() {
-
 
     var x;
     var y;
@@ -284,9 +285,6 @@ function checkGameOver() {
     }
 
 
-
-
-
     // ゲームが続行しているかどうか（false:終了、true:続行）
     if(!mode) {
         if (isMaru) {
@@ -301,9 +299,7 @@ function checkGameOver() {
                 document.getElementById(i + "-" + j).style.cursor = 'not-allowed';
             }
         }
-
     } else {
-        
         //空白セルの確認
         for(var count = 0; count < 9; count++) {
             if(cellStatus[count] == null) {
@@ -335,12 +331,13 @@ function checkGameOver() {
 
 
 
+
+// コンピュータによるセル選択
 function com_select() {
     var mass_null = 0;
     var mass_move = 0;
     var count;
     var anotherReach = 99;
-
     var moving = new Array(9);
 
 
@@ -456,6 +453,7 @@ function com_select() {
                 // 後攻2手目
                 case 3:
                     if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) && ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) || (((cellStatus[2] != isMaru) && (cellStatus[2] != null)) && ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
+                        // 角が対角で押さえられている場合は、角ではないセルを狙う。
                         switch(Math.floor(Math.random() * 4)) {
                             case 0:
                                 moving[mass_move] = 1;
@@ -470,6 +468,7 @@ function com_select() {
                                 moving[mass_move] = 7;
                         }
                     } else if((((cellStatus[1] != isMaru) && (cellStatus[1] != null)) && ((cellStatus[7] != isMaru) && (cellStatus[7] != null))) || (((cellStatus[3] != isMaru) && (cellStatus[3] != null)) && ((cellStatus[5] != isMaru) && (cellStatus[5] != null)))) {
+                        // 角ではないが、対面で押さえられている場合は、角を狙う。
                         switch(Math.floor(Math.random() * 4)) {
                             case 0:
                                 moving[mass_move] = 0;
@@ -483,73 +482,41 @@ function com_select() {
                             case 3:
                                 moving[mass_move] = 8;
                         }
-                    } else {
-                        if((((cellStatus[1] != isMaru) && (cellStatus[1] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null))) && (((cellStatus[3] != isMaru) && (cellStatus[3] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
+                    // 次ターンでダブルリーチになる場所をつぶす。
+                    } else if((((cellStatus[1] != isMaru) && (cellStatus[1] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null))) && (((cellStatus[3] != isMaru) && (cellStatus[3] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
                             moving[mass_move] = 0;
-                        } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[1] != isMaru) && (cellStatus[1] != null))) && (((cellStatus[5] != isMaru) && (cellStatus[5] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
-                            moving[mass_move] = 2;
-                        } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[3] != isMaru) && (cellStatus[3] != null))) && (((cellStatus[7] != isMaru) && (cellStatus[7] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
-                            moving[mass_move] = 6;
-                        } else if((((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[5] != isMaru) && (cellStatus[5] != null))) && (((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[7] != isMaru) && (cellStatus[7] != null)))) {
-                            moving[mass_move] = 8;
-                        }
+                    } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[1] != isMaru) && (cellStatus[1] != null))) && (((cellStatus[5] != isMaru) && (cellStatus[5] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
+                        moving[mass_move] = 2;
+                    } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[3] != isMaru) && (cellStatus[3] != null))) && (((cellStatus[7] != isMaru) && (cellStatus[7] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
+                        moving[mass_move] = 6;
+                    } else if((((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[5] != isMaru) && (cellStatus[5] != null))) && (((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[7] != isMaru) && (cellStatus[7] != null)))) {
+                        moving[mass_move] = 8;
+                    // 特に進展がない状況では、自分に有利なように角を狙う。
+                    } else {
+                        do {
+                            switch(Math.floor(Math.random() * 4)) {
+                                case 0:
+                                    moving[mass_move] = 0;
+                                    break;
+                                case 1:
+                                    moving[mass_move] = 2;
+                                    break;
+                                case 2:
+                                    moving[mass_move] = 6;
+                                    break;
+                                case 3:
+                                    moving[mass_move] = 8;
+                                    break;
+                            }
+                        } while (cellStatus[moving[mass_move]] != null);
                     }
-
-                    // if((cellStatus[0] == null) && (cellStatus[2] == null) && (cellStatus[6] == null) && (cellStatus[8] == null)) {
-                    //     if((cellStatus[1] != null) && (cellStatus[3] != null)) {
-                    //         moving[mass_move] = 0;
-                    //     } else if((cellStatus[1] != null) && (cellStatus[5] != null)) {
-                    //         moving[mass_move] = 2;
-                    //     } else if((cellStatus[3] != null) && (cellStatus[7] != null)) {
-                    //         moving[mass_move] = 6;
-                    //     } else if((cellStatus[5] != null) && (cellStatus[7] != null)) {
-                    //         moving[mass_move] = 8;
-                    //     } else {
-                            
-                    //     }
-                    // } else {
-                    //     if (((cellStatus[0] != isMaru) && (cellStatus[0] != null)) && ((cellStatus[8] == null))) {
-                    //         moving[mass_move] = 8;
-                    //     } else if (((cellStatus[2] != isMaru) && (cellStatus[2] != null)) && ((cellStatus[6] == null))) {
-                    //         moving[mass_move] = 2;
-                    //     } else if (((cellStatus[6] != isMaru) && (cellStatus[6] != null)) && ((cellStatus[2] == null))) {
-                    //         moving[mass_move] = 2;
-                    //     } else if (((cellStatus[8] != isMaru) && (cellStatus[8] != null)) && ((cellStatus[0] == null))) {
-                    //         moving[mass_move] = 0;
-                    //     } else {
-                    //         moving[mass_move] = -1;
-                    //         do{
-                    //             switch(Math.floor(Math.random() * 4)) {
-                    //                 case 0:
-                    //                     //if((cellStatus[0] == null) && (cellStatus[1] == null) && (cellStatus[3] == null)) {
-                    //                         moving[mass_move] = 0;
-                    //                     //}
-                    //                     break;
-                    //                 case 1:
-                    //                     //if((cellStatus[1] == null) && (cellStatus[2] == null) && (cellStatus[5] == null)) {
-                    //                         moving[mass_move] = 2;
-                    //                     //}
-                    //                     break;
-                    //                 case 2:
-                    //                     //if((cellStatus[3] == null) && (cellStatus[6] == null) && (cellStatus[7] == null)) {
-                    //                         moving[mass_move] = 6;
-                    //                     //}
-                    //                     break;
-                    //                 case 3:
-                    //                     //if((cellStatus[5] == null) && (cellStatus[7] == null) && (cellStatus[8] == null)) {
-                    //                         moving[mass_move] = 8;
-                    //                     //}
-                    //             }
-                    //         }while ((moving[mass_move] == -1) || (cellStatus[moving[mass_move]] != null))
-                    //     }
-                        
-                    // }
                     break;
+
 
                 // 先攻3手目
                 case 4:
 
-                    //隣接セルも空いている角を狙う。
+                    // 隣接セルも空いている角を狙う。
                     if((cellStatus[0] == null) && (cellStatus[1] == null) && (cellStatus[3] == null)) {
                         moving[mass_move] = 0;
                     } else if((cellStatus[1] == null) && (cellStatus[2] == null) && (cellStatus[5] == null)) {
@@ -561,36 +528,10 @@ function com_select() {
                     }
                     break;
 
+
                 // 後攻3手目
                 case 5:
-
-                    // if(cellStatus[0] == null) {
-                    //     if(cellStatus[1] == null) {
-                    //         moving[mass_move] = 1;
-                    //     } else if(cellStatus[3] == null) {
-                    //         moving[mass_move] = 3;
-                    //     }
-                    // } else if(cellStatus[2] == null) {
-                    //     if(cellStatus[1] == null) {
-                    //         moving[mass_move] = 1;
-                    //     } else if(cellStatus[5] == null) {
-                    //         moving[mass_move] = 5;
-                    //     }
-                    // } else if(cellStatus[6] == null) {
-                    //     if(cellStatus[3] == null) {
-                    //         moving[mass_move] = 3;
-                    //     } else if(cellStatus[7] == null) {
-                    //         moving[mass_move] = 7;
-                    //     }
-                    // } else if(cellStatus[8] == null) {
-                    //     if(cellStatus[5] == null) {
-                    //         moving[mass_move] = 5;
-                    //     } else if(cellStatus[7] == null) {
-                    //         moving[mass_move] = 7;
-                    //     }
-                    // }
-
-                    //
+                    // 角を取る。
                     do {
                         switch(Math.floor(Math.random() * 4)) {
                             case 0:
@@ -608,11 +549,10 @@ function com_select() {
                         }
                     } while (cellStatus[moving[mass_move]] != null);
                     break;
-                    
 
 
+                // 上記以外の場合はリーチにならない限り、適当に埋めていく
                 default:
-                    // 上記以外の場合はすでに引き分けが確定しているため、適当に埋めていく。
                     do {
                         moving[mass_move] = Math.floor(Math.random() * 9);
                     } while (cellStatus[moving[mass_move]] != null);
@@ -620,15 +560,15 @@ function com_select() {
         }
     }
 
+    // 選択したセルに記入などの処理
     write_kigou(moving[mass_move]);
-    
 }
 
 
 
 
 
-
+// 選択されたセルに記入
 function write_kigou(cellno) {
     var x = cellno % 3;
     var y = Math.floor(cellno / 3);
@@ -642,6 +582,7 @@ function write_kigou(cellno) {
         }
     }
 
+    // ○か×かを記入する
     if(isMaru) {
         document.getElementById(x + "-" + y).innerHTML = "〇";
         document.getElementById(x + "-" + y).style.color = "#ff0000";
@@ -650,12 +591,13 @@ function write_kigou(cellno) {
         document.getElementById(x + "-" + y).style.color = "#0000ff";
     }
 
+    // 最後に選択されたセルを黄色にする
     document.getElementById(x + "-" + y).style.backgroundColor = "#ffff00";
 
     // 記入されたセルにhoverした際のカーソルを「操作できない領域用」にする
     document.getElementById(x + "-" + y).style.cursor = 'not-allowed';
 
-    //終了条件チェック
+    // 終了条件チェック
     checkGameOver();
 }
 
