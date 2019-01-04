@@ -369,164 +369,309 @@ function com_select() {
         } else {
             mass_move = 9 - mass_null;
 
-            if(mass_move == 0) {
-                moving[mass_move] = Math.floor(Math.random() * 4) * 2;
-                if(moving[mass_move] == 4) {
-                    moving[mass_move] = 8;
-                } 
-
-            } else if(mass_move == 2) {
-
-                if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
-                    if(cellStatus[0] == isMaru) {
+            switch(mass_move) {
+                case 0:
+                    moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                    if(moving[mass_move] == 4) {
                         moving[mass_move] = 8;
-                    } else if(cellStatus[2] == isMaru) {
-                        moving[mass_move] = 6;
-                    } else if(cellStatus[6] == isMaru) {
-                        moving[mass_move] = 2;
-                    } else if(cellStatus[8] == isMaru) {
-                        moving[mass_move] = 0;
-                    }
+                    } 
+                    break;
 
-                } else if(((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) {
-                    if((cellStatus[0] == isMaru) && (cellStatus[8] == null)) {
-                        moving[mass_move] = 8;
-                    } else if((cellStatus[2] == isMaru) && (cellStatus[6] == null)) {
-                        moving[mass_move] = 6;
-                    } else if((cellStatus[6] == isMaru) && (cellStatus[2] == null)) {
-                        moving[mass_move] = 2;
-                    } else if((cellStatus[8] == isMaru) && (cellStatus[0] == null)) {
-                        moving[mass_move] = 0;
+                case 1:
+                    if(cellStatus[4] == null) {
+                        moving[mass_move] = 4;
                     } else {
-                        do {
-                            moving[mass_move] = Math.floor(Math.random() * 4) * 2;
-                            if(moving[mass_move] == 4) {
+                        switch(Math.floor(Math.random() * 4)) {
+                            case 0:
+                                moving[mass_move] = 0;
+                                break;
+                            case 1:
+                                moving[mass_move] = 2;
+                                break;
+                            case 2:
+                                moving[mass_move] = 6;
+                                break;
+                            case 3:
+                                moving[mass_move] = 8;
+                                break;
+                        }
+                    }
+                    break;
+
+                case 2:
+                    if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
+                        if(cellStatus[0] == isMaru) {
+                            moving[mass_move] = 8;
+                        } else if(cellStatus[2] == isMaru) {
+                            moving[mass_move] = 6;
+                        } else if(cellStatus[6] == isMaru) {
+                            moving[mass_move] = 2;
+                        } else if(cellStatus[8] == isMaru) {
+                            moving[mass_move] = 0;
+                        }
+    
+                    } else if(((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) {
+                        if((cellStatus[0] == isMaru) && (cellStatus[8] == null)) {
+                            moving[mass_move] = 8;
+                        } else if((cellStatus[2] == isMaru) && (cellStatus[6] == null)) {
+                            moving[mass_move] = 6;
+                        } else if((cellStatus[6] == isMaru) && (cellStatus[2] == null)) {
+                            moving[mass_move] = 2;
+                        } else if((cellStatus[8] == isMaru) && (cellStatus[0] == null)) {
+                            moving[mass_move] = 0;
+                        } else {
+                            do {
+                                moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                                if(moving[mass_move] == 4) {
+                                    moving[mass_move] = 8;
+                                }
+                            } while (cellStatus[moving[mass_move]] != null);
+                        }
+    
+                    } else {
+                        if((cellStatus[0] == isMaru) || (cellStatus[8] == isMaru)) {
+                            if((cellStatus[1] == null) && (cellStatus[5] == null)) {
+                                moving[mass_move] = 2;
+                            } else if((cellStatus[3] == null) && (cellStatus[7] == null)) {
+                                moving[mass_move] = 6;
+                            }
+                        } else if((cellStatus[2] == isMaru) || (cellStatus[6] == isMaru)) {
+                            if((cellStatus[1] == null) && (cellStatus[3] == null)) {
+                                moving[mass_move] = 0;
+                            } else if((cellStatus[5] == null) && (cellStatus[7] == null)) {
                                 moving[mass_move] = 8;
                             }
-                        } while (cellStatus[moving[mass_move]] != null);
-                    }
-
-                } else {
-                    if((cellStatus[0] == isMaru) || (cellStatus[8] == isMaru)) {
-                        if((cellStatus[1] == null) && (cellStatus[5] == null)) {
-                            moving[mass_move] = 2;
-                        } else if((cellStatus[3] == null) && (cellStatus[7] == null)) {
-                            moving[mass_move] = 6;
-                        }
-                    } else if((cellStatus[2] == isMaru) || (cellStatus[6] == isMaru)) {
-                        if((cellStatus[1] == null) && (cellStatus[3] == null)) {
-                            moving[mass_move] = 0;
-                        } else if((cellStatus[5] == null) && (cellStatus[7] == null)) {
-                            moving[mass_move] = 8;
                         }
                     }
-                }
+                    break;
 
-
-                
-                
-            } else if(mass_move == 4) {
-                
-                if(cellStatus[4] == null) {
-                    moving[mass_move] = 4;
-                } else {
-                    if(cellStatus[0] == null) {
-                        moving[mass_move] = 0;
-                    } else if(cellStatus[2] == null) {
-                        moving[mass_move] = 2;
-                    } else if(cellStatus[6] == null) {
-                        moving[mass_move] = 6;
-                    } else if(cellStatus[8] == null) {
-                        moving[mass_move] = 8;
-                    }
-                }
-
-            } else if(mass_move == 8) {
-                for(var i = 0; i < 9; i++) {
-                    if(cellStatus[i] == null) {
-                        moving[mass_move] = i;
-                        break;
-                    }
-                }
-            } else if(mass_move == 1) {
-                if((cellStatus[0] == null) && (cellStatus[2] == null) && (cellStatus[6] == null) && (cellStatus[8] == null)) {
-                    if(cellStatus[4] == null) {
-                        if(cellStatus[1] != null) {
-                            switch(Math.floor(Math.random() * 4)) {
-                                case 0:
-                                    moving[mass_move] = 0;
-                                    break;
-                                case 1:
-                                    moving[mass_move] = 2;
-                                    break;
-                                case 2:
-                                    moving[mass_move] = 4;
-                                    break;
-                                case 3:
-                                    moving[mass_move] = 7;
-                                    break;
-                            }
-                        } else if(cellStatus[3] != null) {
-                            switch(Math.floor(Math.random() * 4)) {
-                                case 0:
-                                    moving[mass_move] = 0;
-                                    break;
-                                case 1:
-                                    moving[mass_move] = 4;
-                                    break;
-                                case 2:
-                                    moving[mass_move] = 5;
-                                    break;
-                                case 3:
-                                    moving[mass_move] = 6;
-                                    break;
-                            }
-
-                        } else if(cellStatus[5] != null) {
-                            switch(Math.floor(Math.random() * 4)) {
-                                case 0:
-                                    moving[mass_move] = 2;
-                                    break;
-                                case 1:
-                                    moving[mass_move] = 3;
-                                    break;
-                                case 2:
-                                    moving[mass_move] = 4;
-                                    break;
-                                case 3:
-                                    moving[mass_move] = 8;
-                                    break;
-                            }
-                        } else if(cellStatus[7] != null) {
+                case 3:
+                    if(cellStatus[4] == isMaru) {
+                        if((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru))) || (((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru)))) {
                             switch(Math.floor(Math.random() * 4)) {
                                 case 0:
                                     moving[mass_move] = 1;
                                     break;
                                 case 1:
-                                    moving[mass_move] = 4;
+                                    moving[mass_move] = 3;
                                     break;
                                 case 2:
-                                    moving[mass_move] = 6;
+                                    moving[mass_move] = 5;
                                     break;
                                 case 3:
-                                    moving[mass_move] = 8;
+                                    moving[mass_move] = 7;
                                     break;
                             }
-                        }
-                    } else {
-                        moving[mass_move] = Math.floor(Math.random() * 4) * 2;
-                        if(moving[mass_move] == 4) {
+                        } else if (((((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru))) || (((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[3] != null) && (cellStatus[3] != isMaru)))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[3] != null) && (cellStatus[3] != isMaru)))) {
+                            moving[mass_move] = 0;
+                        } else if (((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[5] != null) && (cellStatus[5] != isMaru))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru)))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[5] != null) && (cellStatus[5] != isMaru)))) {
+                            moving[mass_move] = 2;
+                        } else if (((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru))) || (((cellStatus[3] != null) && (cellStatus[3] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru)))) || (((cellStatus[3] != null) && (cellStatus[3] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru)))) {
+                            moving[mass_move] = 6;
+                        } else if (((((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru))) || (((cellStatus[5] != null) && (cellStatus[5] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru)))) || (((cellStatus[5] != null) && (cellStatus[5] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru)))) {
                             moving[mass_move] = 8;
                         }
                     }
-                } else {
-                    moving[mass_move] = 4;
-                }
-            } else if(mass_move == 3) {
-                
+                    break;
+
+                case 4:
+
+                    if(cellStatus[4] == null) {
+                        moving[mass_move] = 4;
+                    } else {
+                        if(cellStatus[0] == null) {
+                            moving[mass_move] = 0;
+                        } else if(cellStatus[2] == null) {
+                            moving[mass_move] = 2;
+                        } else if(cellStatus[6] == null) {
+                            moving[mass_move] = 6;
+                        } else if(cellStatus[8] == null) {
+                            moving[mass_move] = 8;
+                        }
+                    }
+                    break;
+                case 5:
+                    do {
+                        switch(Math.floor(Math.random() * 4)) {
+                            case 0:
+                                moving[mass_move] = 0;
+                                break;
+                            case 1:
+                                moving[mass_move] = 2;
+                                break;
+                            case 2:
+                                moving[mass_move] = 6;
+                                break;
+                            case 3:
+                                moving[mass_move] = 8;
+                                break;
+                        }
+                    } while (cellStatus[moving[mass_move]] != null);
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    do {
+                        moving[mass_move] = Math.floor(Math.random() * 9);
+                    } while (cellStatus[moving[mass_move]] != null);
+                    break;
+                case 8:
+                    for(var i = 0; i < 9; i++) {
+                        if(cellStatus[i] == null) {
+                            moving[mass_move] = i;
+                            break;
+                        }
+                    }
+                    break;
             }
 
-            
+            // if(mass_move == 0) {
+            //     moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+            //     if(moving[mass_move] == 4) {
+            //         moving[mass_move] = 8;
+            //     } 
+
+            // } else if(mass_move == 2) {
+
+            //     if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
+            //         if(cellStatus[0] == isMaru) {
+            //             moving[mass_move] = 8;
+            //         } else if(cellStatus[2] == isMaru) {
+            //             moving[mass_move] = 6;
+            //         } else if(cellStatus[6] == isMaru) {
+            //             moving[mass_move] = 2;
+            //         } else if(cellStatus[8] == isMaru) {
+            //             moving[mass_move] = 0;
+            //         }
+
+            //     } else if(((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) {
+            //         if((cellStatus[0] == isMaru) && (cellStatus[8] == null)) {
+            //             moving[mass_move] = 8;
+            //         } else if((cellStatus[2] == isMaru) && (cellStatus[6] == null)) {
+            //             moving[mass_move] = 6;
+            //         } else if((cellStatus[6] == isMaru) && (cellStatus[2] == null)) {
+            //             moving[mass_move] = 2;
+            //         } else if((cellStatus[8] == isMaru) && (cellStatus[0] == null)) {
+            //             moving[mass_move] = 0;
+            //         } else {
+            //             do {
+            //                 moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+            //                 if(moving[mass_move] == 4) {
+            //                     moving[mass_move] = 8;
+            //                 }
+            //             } while (cellStatus[moving[mass_move]] != null);
+            //         }
+
+            //     } else {
+            //         if((cellStatus[0] == isMaru) || (cellStatus[8] == isMaru)) {
+            //             if((cellStatus[1] == null) && (cellStatus[5] == null)) {
+            //                 moving[mass_move] = 2;
+            //             } else if((cellStatus[3] == null) && (cellStatus[7] == null)) {
+            //                 moving[mass_move] = 6;
+            //             }
+            //         } else if((cellStatus[2] == isMaru) || (cellStatus[6] == isMaru)) {
+            //             if((cellStatus[1] == null) && (cellStatus[3] == null)) {
+            //                 moving[mass_move] = 0;
+            //             } else if((cellStatus[5] == null) && (cellStatus[7] == null)) {
+            //                 moving[mass_move] = 8;
+            //             }
+            //         }
+            //     }
+
+
+                
+                
+            // } else if(mass_move == 4) {
+                
+            //     if(cellStatus[4] == null) {
+            //         moving[mass_move] = 4;
+            //     } else {
+            //         if(cellStatus[0] == null) {
+            //             moving[mass_move] = 0;
+            //         } else if(cellStatus[2] == null) {
+            //             moving[mass_move] = 2;
+            //         } else if(cellStatus[6] == null) {
+            //             moving[mass_move] = 6;
+            //         } else if(cellStatus[8] == null) {
+            //             moving[mass_move] = 8;
+            //         }
+            //     }
+
+            // } else if(mass_move == 8) {
+            //     for(var i = 0; i < 9; i++) {
+            //         if(cellStatus[i] == null) {
+            //             moving[mass_move] = i;
+            //             break;
+            //         }
+            //     }
+            // } else if(mass_move == 1) {
+            //     if(cellStatus[4] == null) {
+            //         moving[mass_move] = 4;
+            //     } else {
+            //         switch(Math.floor(Math.random() * 4)) {
+            //             case 0:
+            //                 moving[mass_move] = 0;
+            //                 break;
+            //             case 1:
+            //                 moving[mass_move] = 2;
+            //                 break;
+            //             case 2:
+            //                 moving[mass_move] = 6;
+            //                 break;
+            //             case 3:
+            //                 moving[mass_move] = 8;
+            //                 break;
+            //         }
+            //     }
+            // } else if(mass_move == 3) {
+            //     if(cellStatus[4] == isMaru) {
+            //         if((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru))) || (((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru)))) {
+            //             switch(Math.floor(Math.random() * 4)) {
+            //                 case 0:
+            //                     moving[mass_move] = 1;
+            //                     break;
+            //                 case 1:
+            //                     moving[mass_move] = 3;
+            //                     break;
+            //                 case 2:
+            //                     moving[mass_move] = 5;
+            //                     break;
+            //                 case 3:
+            //                     moving[mass_move] = 7;
+            //                     break;
+            //             }
+            //         } else if (((((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru))) || (((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[3] != null) && (cellStatus[3] != isMaru)))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[3] != null) && (cellStatus[3] != isMaru)))) {
+            //             moving[mass_move] = 0;
+            //         } else if (((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[5] != null) && (cellStatus[5] != isMaru))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru)))) || (((cellStatus[1] != null) && (cellStatus[1] != isMaru)) && ((cellStatus[5] != null) && (cellStatus[5] != isMaru)))) {
+            //             moving[mass_move] = 2;
+            //         } else if (((((cellStatus[0] != null) && (cellStatus[0] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru))) || (((cellStatus[3] != null) && (cellStatus[3] != isMaru)) && ((cellStatus[8] != null) && (cellStatus[8] != isMaru)))) || (((cellStatus[3] != null) && (cellStatus[3] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru)))) {
+            //             moving[mass_move] = 6;
+            //         } else if (((((cellStatus[2] != null) && (cellStatus[2] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru))) || (((cellStatus[5] != null) && (cellStatus[5] != isMaru)) && ((cellStatus[6] != null) && (cellStatus[6] != isMaru)))) || (((cellStatus[5] != null) && (cellStatus[5] != isMaru)) && ((cellStatus[7] != null) && (cellStatus[7] != isMaru)))) {
+            //             moving[mass_move] = 8;
+            //         }
+            //     }
+            // } else if(mass_move == 5) {
+            //     do {
+            //         switch(Math.floor(Math.random() * 4)) {
+            //             case 0:
+            //                 moving[mass_move] = 0;
+            //                 break;
+            //             case 1:
+            //                 moving[mass_move] = 2;
+            //                 break;
+            //             case 2:
+            //                 moving[mass_move] = 6;
+            //                 break;
+            //             case 3:
+            //                 moving[mass_move] = 8;
+            //                 break;
+            //         }
+            //     } while (cellStatus[moving[mass_move]] != null);
+            // } else if(mass_move == 7) {
+            //     do {
+            //         moving[mass_move] = Math.floor(Math.random() * 9);
+            //     } while (cellStatus[moving[mass_move]] != null);
+            // }
         }
 
         write_kigou(moving[mass_move]);
