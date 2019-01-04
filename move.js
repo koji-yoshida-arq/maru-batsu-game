@@ -76,7 +76,6 @@ function first() {
     // テーブルの生成
     document.getElementById("gamemonitor").innerHTML = "<table></table>";
 
-
     // テーブルの読み込み
     var table = document.querySelector("table");
 
@@ -86,9 +85,7 @@ function first() {
         // 行方向の生成（はじめ）
         var tr = document.createElement("tr");
 
-
         for(var i = 0; i < 3; i++) {
-
             // 列方向の生成（はじめ）
             var td = document.createElement("td");
             // セルIDの設定
@@ -127,7 +124,6 @@ function reset() {
 
             // リーチ情報のリセット
             cellReach[i * 3 + j] = null;
-            
         }
     }
 
@@ -155,10 +151,8 @@ function clickTd(target) {
         var x = Number(sx);
         var y = Number(sy);
 
-
         // セルの中身が何もかかれていないことを確認
         if(target.innerHTML == '') {
-
             // プレイヤの確認（true:○、false:×）
             write_kigou(x + (y * 3));
         }
@@ -240,11 +234,9 @@ function checkGameOver() {
                 // 勝利時の表示変更
                 document.getElementById(x + "-" + y).style.color = "#ffffff";
                 document.getElementById(x + "-" + y).style.backgroundColor = bcolor;
-
             }
 
         } else if(((cell[0] != null) && (cell[1] != null) && (cell[2] == null) && (cell[0] == cell[1])) || ((cell[0] != null) && (cell[1] == null) && (cell[2] != null) && (cell[0] == cell[2])) || ((cell[0] == null) && (cell[1] != null) && (cell[2] != null) && (cell[1] == cell[2]))) {
-
             var j;
             var reach_color;
 
@@ -300,6 +292,7 @@ function checkGameOver() {
             }
         }
     } else {
+        
         //空白セルの確認
         for(var count = 0; count < 9; count++) {
             if(cellStatus[count] == null) {
