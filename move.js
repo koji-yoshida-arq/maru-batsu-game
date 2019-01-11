@@ -332,6 +332,7 @@ function com_select() {
     var count;
     var anotherReach = 99;
     var moving = new Array(9);
+    var reach_flg = 0;
 
 
     // リーチ状態の場所を探す。
@@ -339,10 +340,14 @@ function com_select() {
         
         // 自リーチのときにはそのセルを選択する。相手のセルは今は記録だけしてスルー。
         if((cellStatus[count] == null) && ((cellReach[count] == isMaru) || (cellReach[count] == "both"))) {
-            moving[mass_move] = count;
-            break;
+            if((reach_flg == 0) || (Math.floor(Math.random() * 2) == 1)) {
+                moving[mass_move] = count;
+                reach_flg = 1;
+            }
         } else if((cellStatus[count] == null) && ((cellReach[count] != isMaru) && (cellReach[count] != null))){
-            anotherReach = count;
+            if((anotherReach == 99) || (Math.floor(Math.random() * 2) == 1)) {
+                anotherReach = count;
+            }
         } else if(cellStatus[count] == null) {
             mass_null++; 
         }
@@ -350,7 +355,7 @@ function com_select() {
 
 
     // 自リーチが無いとき
-    if(count == 9) {
+    if(reach_flg == 0) {
 
         // 相手のリーチがあればそれを防御する。
         if(anotherReach < 9) {
