@@ -1,6 +1,5 @@
 // ゲームの稼動非稼動
 var mode = false;
-var count = 0;
 
 // ターン（trueが○、falseが×）
 var isMaru;
@@ -29,6 +28,8 @@ var cellReach = [
 
 // ゲームスタート
 function game() {
+    var count = 0;
+
     turn = document.form1.turn;
     maru_player = document.form1.maru_player.value;
     batsu_player = document.form1.batsu_player.value;
@@ -327,234 +328,188 @@ function checkGameOver() {
 
 // コンピュータによるセル選択
 function com_select() {
-    var mass_null = 0;
     var mass_move = 0;
+    var mass_kado = 0;
     var count;
-    var anotherReach = 99;
     var moving = new Array(9);
     var reach_flg = 0;
 
-
-    // リーチ状態の場所を探す。
+    // 空白セル数の確認
     for(count = 0; count < 9; count++) {
-        
-        // 自リーチのときにはそのセルを選択する。相手のセルは今は記録だけしてスルー。
-        if((cellStatus[count] == null) && ((cellReach[count] == isMaru) || (cellReach[count] == "both"))) {
-            if((reach_flg == 0) || (Math.floor(Math.random() * 2) == 1)) {
-                moving[mass_move] = count;
-                reach_flg = 1;
+        if(cellStatus[count] != null) {
+            mass_move++;
+
+            // うち角セル数の確認
+            if((count == 0) || (count == 2) || (count == 6) || (count == 8)) {
+                mass_kado++;
             }
-        } else if((cellStatus[count] == null) && ((cellReach[count] != isMaru) && (cellReach[count] != null))){
-            if((anotherReach == 99) || (Math.floor(Math.random() * 2) == 1)) {
-                anotherReach = count;
-            }
-        } else if(cellStatus[count] == null) {
-            mass_null++; 
         }
     }
 
+    // 自リーチの確認
+    for(count = 0; count < 9; count++) {
+        if((cellStatus[count] == null) && ((cellReach[count] == isMaru) || (cellReach[count] == "both"))) {
+            moving[mass_move] = count;
+            reach_flg = 1;
+        }
+    }
 
-    // 自リーチが無いとき
+    // 相手リーチの確認
+    if(reach_flg == 0) {
+        for(count = 0; count < 9; count++) {
+            if((cellStatus[count] == null) && ((cellReach[count] != isMaru) && (cellReach[count] != null))) {
+                moving[mass_move] = count;
+                reach_flg = 1;
+            }
+        }  
+    }
+
+    // リーチ時以外の処理
     if(reach_flg == 0) {
 
-        // 相手のリーチがあればそれを防御する。
-        if(anotherReach < 9) {
-            moving[mass_move] = anotherReach;
-        } else {
-            mass_move = 9 - mass_null;
+        // ターン数によってどこに置くかを決める。
+        switch(mass_move) {
+            
+            // 0ターン（先攻1手目）
+            case 0: 
+                moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                if(moving[mass_move] == 4) {
+                    moving[mass_move] = 8;
+                } 
+                break;
 
-            // 現時点で埋まっているマスが何個あるかを調べ、状況に応じてそれぞれの動きをする。
-            switch(mass_move) {
+            // 2ターン（先攻2手目）
+            case 2:
+                switch(mass_kado) {
+                    case 1:
+                        if((cellStatus[1] != null) || (cellStatus[3] != null) || (cellStatus[5] != null) || (cellStatus[7] != null)) {
+                            if((cellStatus[0] != null) && (cellStatus[1] != null)) {
+                                moving[mass_move] = 6;
+                            } else if((cellStatus[0] != null) && (cellStatus[3] != null)) {
+                                moving[mass_move] = 2;
+                            } else if((cellStatus[2] != null) && (cellStatus[1] != null)) {
+                                moving[mass_move] = 8;
+                            } else if((cellStatus[2] != null) && (cellStatus[5] != null)) {
+                                moving[mass_move] = 0;
+                            } else if((cellStatus[6] != null) && (cellStatus[3] != null)) {
+                                moving[mass_move] = 8;
+                            } else if((cellStatus[6] != null) && (cellStatus[7] != null)) {
+                                moving[mass_move] = 0;
+                            } else if((cellStatus[8] != null) && (cellStatus[5] != null)) {
+                                moving[mass_move] = 6;
+                            } else if((cellStatus[8] != null) && (cellStatus[7] != null)) {
+                                moving[mass_move] = 2;
+                            } else {
+                                do {
+                                    moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                                    if(moving[mass_move] == 4) {
+                                        moving[mass_move] = 8;
+                                    }
+                                } while ((cellStatus[moving[mass_move]] != null) || (cellStatus[8 - moving[mass_move]] != null));
+                            }
+                        } else {
+                            if(cellStatus[0] == isMaru) {
+                                moving[mass_move] = 8;
+                            } else if(cellStatus[2] == isMaru) {
+                                moving[mass_move] = 6;
+                            } else if(cellStatus[6] == isMaru) {
+                                moving[mass_move] = 2;
+                            } else if(cellStatus[8] == isMaru) {
+                                moving[mass_move] = 0;
+                            }
+                        }
+                        break;
+                    case 2:
+                        do {
+                            if(Math.floor(Math.random() * 2) == 0) {
+                                if(cellStatus[0] == isMaru) {
+                                    moving[mass_move] = 2;
+                                } else if(cellStatus[2] == isMaru) {
+                                    moving[mass_move] = 8;
+                                } else if(cellStatus[8] == isMaru) {
+                                    moving[mass_move] = 6;
+                                } else if(cellStatus[6] == isMaru) {
+                                    moving[mass_move] = 6;
+                                }
+                            } else {
+                                if(cellStatus[0] == isMaru) {
+                                    moving[mass_move] = 6;
+                                } else if(cellStatus[2] == isMaru) {
+                                    moving[mass_move] = 0;
+                                } else if(cellStatus[8] == isMaru) {
+                                    moving[mass_move] = 2;
+                                } else if(cellStatus[6] == isMaru) {
+                                    moving[mass_move] = 8;
+                                }
+                            }
+                        } while (cellStatus[moving[mass_move]] != null);
+                        break;
+                }
+                break;
 
-                // 先攻1手目
-                case 0:
+            // 4ターン（先攻3手目）
+            case 4:
+                switch(mass_kado) {
+                    case 2:
+                        if(cellStatus[4] == null) {
+                            moving[mass_move] = 4;
+                        }
+                        break;
+                    case 3:
+                        if(cellStatus[0] == null) {
+                            moving[mass_move] = 0;
+                        } else if(cellStatus[2] == null) {
+                            moving[mass_move] = 2;
+                        } else if(cellStatus[6] == null) {
+                            moving[mass_move] = 6;
+                        } else if(cellStatus[8] == null) {
+                            moving[mass_move] = 8;
+                        }
+                }
+                break;
 
-                    // 勝率の高い角を狙う。
+            // 1ターン（後攻1手目）
+            case 1:
+                if(cellStatus[4] == null) {
+                    moving[mass_move] = 4;
+                } else {
                     moving[mass_move] = Math.floor(Math.random() * 4) * 2;
                     if(moving[mass_move] == 4) {
                         moving[mass_move] = 8;
                     } 
-                    break;
+                }
+                break;
 
-
-                // 後攻1手目
-                case 1:
-
-                    // 先攻が真ん中に置かなければ真ん中を選択する。それ以外のときは角を狙う。
-                    if(cellStatus[4] == null) {
-                        moving[mass_move] = 4;
-                    } else {
-                        switch(Math.floor(Math.random() * 4)) {
-                            case 0:
-                                moving[mass_move] = 0;
-                                break;
-                            case 1:
-                                moving[mass_move] = 2;
-                                break;
-                            case 2:
-                                moving[mass_move] = 6;
-                                break;
-                            case 3:
-                                moving[mass_move] = 8;
-                                break;
-                        }
-                    }
-                    break;
-
-
-                // 先攻2手目
-                case 2:
-
-                    // 真ん中に相手がいるかどうか。
-                    if((cellStatus[4] != isMaru) && (cellStatus[4] != null)) {
-
-                        // 対角線の角を狙う。
-                        if(cellStatus[0] == isMaru) {
-                            moving[mass_move] = 8;
-                        } else if(cellStatus[2] == isMaru) {
-                            moving[mass_move] = 6;
-                        } else if(cellStatus[6] == isMaru) {
-                            moving[mass_move] = 2;
-                        } else if(cellStatus[8] == isMaru) {
-                            moving[mass_move] = 0;
-                        }
-    
-                    } else if(((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) {
-                            // 対角線に相手がいるため、残りの角でリーチをつくる。
-                            do {
-                                moving[mass_move] = Math.floor(Math.random() * 4) * 2;
-                                if(moving[mass_move] == 4) {
-                                    moving[mass_move] = 8;
-                                }
-                            } while (cellStatus[moving[mass_move]] != null);
-
-                    } else {
-
-                        // 相手の影響を受けない側でリーチをつくり、誘う。
-                        if((cellStatus[0] == isMaru) || (cellStatus[8] == isMaru)) {
-                            if((cellStatus[1] == null) && (cellStatus[5] == null)) {
-                                moving[mass_move] = 2;
-                            } else if((cellStatus[3] == null) && (cellStatus[7] == null)) {
-                                moving[mass_move] = 6;
-                            }
-                        } else if((cellStatus[2] == isMaru) || (cellStatus[6] == isMaru)) {
-                            if((cellStatus[1] == null) && (cellStatus[3] == null)) {
-                                moving[mass_move] = 0;
-                            } else if((cellStatus[5] == null) && (cellStatus[7] == null)) {
-                                moving[mass_move] = 8;
-                            }
-                        }
-                    }
-                    break;
-
-
-                // 後攻2手目
-                case 3:
-                    if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) && ((cellStatus[8] != isMaru) && (cellStatus[8] != null))) || (((cellStatus[2] != isMaru) && (cellStatus[2] != null)) && ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
-                        // 角が対角で押さえられている場合は、角ではないセルを狙う。
-                        switch(Math.floor(Math.random() * 4)) {
-                            case 0:
-                                moving[mass_move] = 1;
-                                break;
-                            case 1:
-                                moving[mass_move] = 3;
-                                break;
-                            case 2:
-                                moving[mass_move] = 5;
-                                break;
-                            case 3:
-                                moving[mass_move] = 7;
-                        }
-                    } else if((((cellStatus[1] != isMaru) && (cellStatus[1] != null)) && ((cellStatus[7] != isMaru) && (cellStatus[7] != null))) || (((cellStatus[3] != isMaru) && (cellStatus[3] != null)) && ((cellStatus[5] != isMaru) && (cellStatus[5] != null)))) {
-                        // 角ではないが、対面で押さえられている場合は、角を狙う。
-                        switch(Math.floor(Math.random() * 4)) {
-                            case 0:
-                                moving[mass_move] = 0;
-                                break;
-                            case 1:
-                                moving[mass_move] = 2;
-                                break;
-                            case 2:
-                                moving[mass_move] = 6;
-                                break;
-                            case 3:
-                                moving[mass_move] = 8;
-                        }
-                    // 次ターンでダブルリーチになる場所をつぶす。
-                    } else if((((cellStatus[1] != isMaru) && (cellStatus[1] != null)) || ((cellStatus[2] != isMaru) && (cellStatus[2] != null))) && (((cellStatus[3] != isMaru) && (cellStatus[3] != null)) || ((cellStatus[6] != isMaru) && (cellStatus[6] != null)))) {
-                            moving[mass_move] = 0;
-                    } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[1] != isMaru) && (cellStatus[1] != null))) && (((cellStatus[5] != isMaru) && (cellStatus[5] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
-                        moving[mass_move] = 2;
-                    } else if((((cellStatus[0] != isMaru) && (cellStatus[0] != null)) || ((cellStatus[3] != isMaru) && (cellStatus[3] != null))) && (((cellStatus[7] != isMaru) && (cellStatus[7] != null)) || ((cellStatus[8] != isMaru) && (cellStatus[8] != null)))) {
-                        moving[mass_move] = 6;
-                    } else if((((cellStatus[2] != isMaru) && (cellStatus[2] != null)) || ((cellStatus[5] != isMaru) && (cellStatus[5] != null))) && (((cellStatus[6] != isMaru) && (cellStatus[6] != null)) || ((cellStatus[7] != isMaru) && (cellStatus[7] != null)))) {
-                        moving[mass_move] = 8;
-                    // 特に進展がない状況では、自分に有利なように角を狙う。
-                    } else {
-                        do {
-                            switch(Math.floor(Math.random() * 4)) {
-                                case 0:
-                                    moving[mass_move] = 0;
-                                    break;
-                                case 1:
-                                    moving[mass_move] = 2;
-                                    break;
-                                case 2:
-                                    moving[mass_move] = 6;
-                                    break;
-                                case 3:
-                                    moving[mass_move] = 8;
-                                    break;
-                            }
-                        } while (cellStatus[moving[mass_move]] != null);
-                    }
-                    break;
-
-
-                // 先攻3手目
-                case 4:
-
-                    // 隣接セルも空いている角を狙う。
-                    if((cellStatus[0] == null) && (cellStatus[1] == null) && (cellStatus[3] == null)) {
+            // 2ターン（後攻2手目）
+            case 3:
+                if(((cellStatus[0] != null) && (cellStatus[0] == cellStatus[8])) || (cellStatus[2] != null) && (cellStatus[2] == cellStatus[6])) {
+                    moving[mass_move] = (Math.floor(Math.random() * 4) * 2) + 1;
+                } else {
+                    if (((cellStatus[1] != null) || (cellStatus[2] != null)) && ((cellStatus[3] != null) || (cellStatus[6] != null))){
                         moving[mass_move] = 0;
-                    } else if((cellStatus[1] == null) && (cellStatus[2] == null) && (cellStatus[5] == null)) {
+                    } else if (((cellStatus[0] != null) || (cellStatus[1] != null)) && ((cellStatus[5] != null) || (cellStatus[8] != null))){
                         moving[mass_move] = 2;
-                    } else if((cellStatus[3] == null) && (cellStatus[6] == null) && (cellStatus[7] == null)) {
+                    } else if (((cellStatus[7] != null) || (cellStatus[8] != null)) && ((cellStatus[0] != null) || (cellStatus[3] != null))){
                         moving[mass_move] = 6;
-                    } else if((cellStatus[5] == null) && (cellStatus[7] == null) && (cellStatus[8] == null)) {
+                    } else if (((cellStatus[6] != null) || (cellStatus[7] != null)) && ((cellStatus[2] != null) || (cellStatus[5] != null))){
+                        moving[mass_move] = 8;
+                    } else {
+                        moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                        if(moving[mass_move] == 4) {
+                            moving[mass_move] = 8;
+                        }
+                    }
+                }
+                break;
+            
+            // その他のターン
+            default:
+                do {
+                    moving[mass_move] = Math.floor(Math.random() * 4) * 2;
+                    if(moving[mass_move] == 4) {
                         moving[mass_move] = 8;
                     }
-                    break;
-
-
-                // 後攻3手目
-                case 5:
-                    // 角を取る。
-                    do {
-                        switch(Math.floor(Math.random() * 4)) {
-                            case 0:
-                                moving[mass_move] = 0;
-                                break;
-                            case 1:
-                                moving[mass_move] = 2;
-                                break;
-                            case 2:
-                                moving[mass_move] = 6;
-                                break;
-                            case 3:
-                                moving[mass_move] = 8;
-                                break;
-                        }
-                    } while (cellStatus[moving[mass_move]] != null);
-                    break;
-
-
-                // 上記以外の場合はリーチにならない限り、適当に埋めていく
-                default:
-                    do {
-                        moving[mass_move] = Math.floor(Math.random() * 9);
-                    } while (cellStatus[moving[mass_move]] != null);
-            }
+                } while (cellStatus[moving[mass_move]] != null); 
         }
     }
 
