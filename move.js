@@ -451,9 +451,7 @@ function com_select() {
             case 4:
                 switch(mass_kado) {
                     case 2:
-                        if(cellStatus[4] == null) {
-                            moving[mass_move] = 4;
-                        }
+                        moving[mass_move] = 4;
                         break;
                     case 3:
                         if(cellStatus[0] == null) {
@@ -505,10 +503,7 @@ function com_select() {
             // その他のターン
             default:
                 do {
-                    moving[mass_move] = Math.floor(Math.random() * 4) * 2;
-                    if(moving[mass_move] == 4) {
-                        moving[mass_move] = 8;
-                    }
+                    moving[mass_move] = Math.floor(Math.random() * 9);
                 } while (cellStatus[moving[mass_move]] != null); 
         }
     }
