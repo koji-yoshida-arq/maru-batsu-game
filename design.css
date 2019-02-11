@@ -1,5 +1,21 @@
 @charset "UTF-8";
 
+* {
+    color: #5c0000;
+}
+
+
+
+html {
+    background-color: #fffc60;
+}
+
+
+
+body {
+    width: 800px;
+    margin: 0px auto;
+}
 
 
 
@@ -7,6 +23,7 @@
 /* テーブルの設定 */
 table {
     margin-top: 100px;
+    background-color: #5c0000;
 }
 
 
@@ -16,8 +33,10 @@ table {
 /* テーブルとtdセルの設定 */
 table, table tr td {
 
+    margin: 0px auto;
+
     /* 枠線の設定 */
-    border-color: #000000;
+    border-color: #5c0000;
     border-style: solid;
     border-width: 1px;
 }
@@ -40,7 +59,12 @@ table tr td {
     user-select: none;
 }
 
+h1, p {
+    text-align: center;
+}
 
 
-
-
+input {
+    width: auto;
+    margin-left: 350px;
+}

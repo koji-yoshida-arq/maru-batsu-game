@@ -549,3 +549,13 @@ function write_kigou(cellno) {
     checkGameOver();
 }
 
+
+
+
+
+var app = new Vue({
+    el: '#app',
+    data: {
+      message: 'Hello Vue!'
+    }
+  })
